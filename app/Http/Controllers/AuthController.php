@@ -37,7 +37,20 @@ class AuthController extends Controller
     
     public function me()
     {
-        return response()->json(auth('api')->user());
+        $user = auth('api')->user();
+        $images = $user->images;
+
+        $url_images = [];
+
+        foreach($images as $image){
+            
+            $url_images[] = url("/storage/images/".$user->id."/".$image->name);
+        }
+        
+        $user->url_images = $url_images;
+        $user->makeHidden('images');
+        return response()->json($user);
+        
     }
 
     /**

@@ -33,17 +33,22 @@ class UserController extends Controller
     }
 
     public function adicionarImagem(Request $request){
+        
+        $name = uniqid(date('HisYmd'));
+        $extension = $request->image->extension();
+        $nameFile = "{$name}.{$extension}";
+            
 
         $file = $request->file('image');
-        $upload = $request->image->store('images/'.auth()->user()->id.'/');
+        $upload = $request->image->storeAs('images/'.auth()->user()->id.'/', $nameFile);
+
         if($upload){
             $user = auth()->user();
             $image = new Image();
-            $image->name = $file->getClientOriginalName();
+            $image->name = $nameFile;
             $image->user_id = $user->id;
             $image->save();
 
-    
             return response()->json(['success', 'upload feito com êxito'], 200);
         }
         else {
